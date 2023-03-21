@@ -1,0 +1,13 @@
+.bulb {
+  width: 100px;
+  height: 100px;
+  margin: 50px;
+}
+
+.off {
+  background: black;
+}
+
+.on {
+  background: darkgoldenrod;
+}
