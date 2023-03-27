@@ -1,22 +1,46 @@
 import { Injectable } from '@angular/core';
 import {LightBulb} from "../../types/LightBulb";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LightStateService {
 
+  API_URL: string = "http://localhost:8080/";
+  BULB_PATH: string = "bulb";
+  BULB_BY_ID_PATH: string = "bulbById";
+  ALL_BULB_PATH: string = "allBulbs";
+
   lightBulbs: LightBulb[] = [];
   id: number = 0;
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  getHelloWorld(): Observable<string> {
+    return this.http.get("http://localhost:8080/hello-world", {responseType: "text"});
+  }
+
+  getAllLightBulbs(): Observable<LightBulb[]> {
+    return this.http.get<LightBulb[]>(this.API_URL+ this.BULB_PATH);
+  }
+
+  updateLightBulb() {
+    this.getAllLightBulbs().subscribe((data: LightBulb[]) => {
+      this.lightBulbs = data;
+    });
+  }
 
   addLightBulb(): void {
-    this.lightBulbs.push({id: this.id, state: false});
-    this.id++;
+    this.http.post(this.API_URL + this.BULB_PATH, {}).subscribe(() => {
+      this.updateLightBulb();
+    });
   }
 
   removeLightBulb(): void {
-    this.lightBulbs.pop();
+    this.http.delete(this.API_URL + this.BULB_PATH, {}).subscribe(() => {
+      this.updateLightBulb();
+    });
   }
   getNumberOfBulbs(): number {
     return this.lightBulbs.length;
@@ -37,9 +61,10 @@ export class LightStateService {
   }
 
   setAllStateOfBulb(state: boolean) {
-    this.lightBulbs.forEach(bulb => {
-      bulb.state = state;
-    });
+    this.http.patch(this.API_URL + this.ALL_BULB_PATH + "?state=" + state, {})
+      .subscribe(() => {
+        this.updateLightBulb();
+      })
   }
 
   getLampStateById(id: number): boolean {
@@ -50,10 +75,16 @@ export class LightStateService {
     return false;
   }
 
+  getLampById(id: number): Observable<LightBulb> {
+    return this.http.get<LightBulb>(this.API_URL + this.BULB_BY_ID_PATH + "?id=" + id);
+  }
+
+
+
   setLampStateById(id: number, state: boolean): void {
-    let bulbFiltered = this.lightBulbs.filter(bulb => bulb.id === id);
-    if (bulbFiltered.length === 1) {
-        bulbFiltered[0].state = state;
-    }
+    this.http.patch<null>(this.API_URL + this.BULB_PATH + "?id=" + id, {})
+      .subscribe(() => {
+        this.updateLightBulb();
+      })
   }
 }

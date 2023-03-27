@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {LightStateService} from "./services/lightStateService/light-state-service.service";
+import {LightBulb} from "./types/LightBulb";
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,6 @@ export class AppComponent implements OnInit {
     this.service.setNumberOfBulbsWithMemory(value);
   }
   ngOnInit() {
-    this.service.addLightBulb();
+    this.service.updateLightBulb();
   }
 }
