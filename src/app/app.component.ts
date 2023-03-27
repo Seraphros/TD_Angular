@@ -12,8 +12,13 @@ export class AppComponent implements OnInit {
   constructor(public service: LightStateService) {
   }
 
+  changeInput(event: any) {
+    if (event.target?.validity?.valid === false) return;
+
+    let value = event.target?.valueAsNumber;
+    this.service.setNumberOfBulbsWithMemory(value);
+  }
   ngOnInit() {
-    this.service.addLightBulb();
     this.service.addLightBulb();
   }
 }

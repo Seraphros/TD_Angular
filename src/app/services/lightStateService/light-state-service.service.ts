@@ -15,6 +15,33 @@ export class LightStateService {
     this.id++;
   }
 
+  removeLightBulb(): void {
+    this.lightBulbs.pop();
+  }
+  getNumberOfBulbs(): number {
+    return this.lightBulbs.length;
+  }
+
+  setNumberOfBulbsWithMemory(value: number): void {
+    let oldValue = this.getNumberOfBulbs();
+
+    while (oldValue !== value) {
+      if (oldValue < value) {
+        this.addLightBulb();
+        oldValue++;
+      } else {
+        this.removeLightBulb();
+        oldValue--;
+      }
+    }
+  }
+
+  setAllStateOfBulb(state: boolean) {
+    this.lightBulbs.forEach(bulb => {
+      bulb.state = state;
+    });
+  }
+
   getLampStateById(id: number): boolean {
     let bulbFiltered = this.lightBulbs.filter(bulb => bulb.id === id);
     if (bulbFiltered.length === 1) {
